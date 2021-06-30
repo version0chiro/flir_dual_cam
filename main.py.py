@@ -37,7 +37,8 @@ except:
 
 
 
-# devh = POINTER(uvc_device_handle)()
+devh = POINTER(uvc_device_handle)()
+print(devh)
 # set_manual_ffc(devh)
 
 
