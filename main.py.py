@@ -37,8 +37,69 @@ except:
 
 
 
+
+
+ctx = POINTER(uvc_context)()
+dev = POINTER(uvc_device)()
 devh = POINTER(uvc_device_handle)()
+ctrl = uvc_stream_ctrl()
 print(devh)
+res = libuvc.uvc_init(byref(ctx), 0)
+if res < 0:
+    print("uvc_init error")
+    # exit(1)
+
+try:
+    res = libuvc.uvc_find_device(
+        ctx, byref(dev), PT_USB_VID, PT_USB_PID, 0)
+    if res < 0:
+        print("uvc_find_device error")
+        exit(1)
+
+    try:
+        res = libuvc.uvc_open(dev, byref(devh))
+        if res < 0:
+            print("uvc_open error")
+            exit(1)
+
+        print("device opened!")
+
+        print_device_info(devh)
+        print_device_formats(devh)
+
+        frame_formats = uvc_get_frame_formats_by_guid(
+            devh, VS_FMT_GUID_Y16)
+        if len(frame_formats) == 0:
+            print("device does not support Y16")
+            exit(1)
+
+        libuvc.uvc_get_stream_ctrl_format_size(devh, byref(ctrl), UVC_FRAME_FORMAT_Y16,
+                                                frame_formats[0].wWidth, frame_formats[0].wHeight, int(
+                                                    1e7 / frame_formats[0].dwDefaultFrameInterval)
+                                                )
+
+        res = libuvc.uvc_start_streaming(
+            devh, byref(ctrl), PTR_PY_FRAME_CALLBACK, None, 0)
+        if res < 0:
+            print("uvc_start_streaming failed: {0}".format(res))
+            exit(1)
+
+        print("done starting stream, displaying settings")
+        print_shutter_info(devh)
+        print("resetting settings to default")
+        set_auto_ffc(devh)
+        set_gain_high(devh)
+        print("current settings")
+        print_shutter_info(devh)
+
+    except:
+        # libuvc.uvc_unref_device(dev)
+        print('Failed to Open Device')
+except:
+    # libuvc.uvc_exit(ctx)
+    print('Failed to Find Device')
+    exit(1)
+
 # set_manual_ffc(devh)
 
 
