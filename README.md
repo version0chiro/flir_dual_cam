@@ -1,0 +1,1 @@
+## This is python files to run flir and visible inside a simple GUI for swadeshi
