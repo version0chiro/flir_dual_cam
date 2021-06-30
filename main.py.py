@@ -37,8 +37,8 @@ except:
 
 
 
-devh = POINTER(uvc_device_handle)()
-set_manual_ffc(devh)
+# devh = POINTER(uvc_device_handle)()
+# set_manual_ffc(devh)
 
 
 IMG_SIZE = 1280, 720          # 640,480 or 1280,720 or 1920,1080
