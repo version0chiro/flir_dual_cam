@@ -1,3 +1,5 @@
+import sys
+sys.settrace 
 from ctypes import *
 import ctypes
 import platform
